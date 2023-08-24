@@ -3,8 +3,8 @@
 # take down any existing deployments and remove volumes
 ( ( docker volume rm petinvent_db_data ) > /dev/null 2>&1 )
 
-docker compose --file "./docker-compose.yml" down \
-|| docker-compose --file "./docker-compose.yml" down \
+docker compose --file "./docker-compose-testing.yml" down \
+|| docker-compose --file "./docker-compose-testing.yml" down \
 || echo "docker-compose-plugin not installed" | exit 1
 
 ( ( docker volume rm petinvent_db_data ) > /dev/null 2>&1 )
@@ -58,8 +58,8 @@ EOF
 sed -i '1s/^\(\xef\xbb\xbf\)\?/\xef\xbb\xbf/' .env
 
 # deploy stack using docker-compose.yml
-docker compose --file "./docker-compose.yml" --env-file "./.env" up -d --build \
-|| docker-compose --file "./docker-compose.yml" --env-file "./.env" up -d --build \
+docker compose --file "./docker-compose-testing.yml" --env-file "./.env" up -d --build \
+|| docker-compose --file "./docker-compose-testing.yml" --env-file "./.env" up -d --build \
 || echo "docker-compose-plugin not installed" | exit 1
 
 exit 0
