@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+<body  style="padding: 20px;">
 <div class="card-body">
     <a type="button" style="display:inline-block; float:right;"
-       class="btn btn-success btn-md text-white" href="{{ url_for('add') }}">Add Pet</a>
-    <h4 style="font-weight: bolder; font-size: 200%;">Pet List</h4>
-    <table class="table" style="font-size: 150%;">
+       class="btn btn-warning btn-md text-black fw-bold" href="{{ url_for('add') }}">Add Task</a>
+    <h4 style="font-weight: bolder; font-size: 200%;">Task List</h4>
+    <table class="table table-borderless" style="font-size: 150%;">
         <thead>
             <tr>
-                <th scope="col">Pet name</th>
-                <th scope="col">Animal</th>
-                <th scope="col">Breed</th>
-                <th scope="col">Birthday</th>
-                <th scope="col">Action</th>
+                <th scope="col">Task</th>
+                <th scope="col">Description</th>
+                <th scope="col">severity</th>
             </tr>
         </thead>
         <tbody>
@@ -20,7 +19,6 @@
                 <td>{{ pet.name }}</td>
                 <td>{{ pet.animal }}</td>
                 <td>{{ pet.species }}</td>
-                <td>{{ pet.birthday }}</td>
                 <td>
                     <div class="btn-group" role="group">
                         <a type="button" style="margin: 2px;" class="btn btn-warning btn-md text-black"
@@ -37,4 +35,5 @@
         </tbody>
     </table>
 </div>
+</body>
 {% endblock %}
