@@ -17,7 +17,8 @@ config.cfg
 __pycache__/
 *.py[cod]
 *$py.class
-
+.trunk
+formatter
 # C extensions
 *.so
 
