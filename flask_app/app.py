@@ -6,11 +6,12 @@ from flask import (
     redirect,
     render_template,
     make_response,
+    jsonify,
 )
 from view import view
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 app = Flask(__name__, template_folder="src/templates", static_folder="src/static")
@@ -72,6 +73,43 @@ def create():
     return render_template("create.html")
 
 
+@app.route("/api/create", methods=["POST"])
+def create_api():
+    db.create_all()
+    try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "Invalid JSON data"}), 400
+
+        required_fields = ["title", "description", "priority"]
+        if not all(key in data for key in required_fields):
+            return jsonify({"error": "Missing fields"}), 400
+
+        title = data["title"]
+        description = data["description"]
+        priority = data["priority"]
+
+        # Calculate the due date as today plus 7 days
+        due_date = datetime.now() + timedelta(days=7)
+        due_date_str = due_date.strftime("%Y-%m-%d")  # Format as "YYYY-MM-DD"
+
+        task = Task(
+            title=title,
+            desc=description,
+            priority=priority,
+            due_date=due_date_str
+        )
+
+        db.session.add(task)
+        db.session.commit()
+
+        return jsonify({"message": "Task created successfully"}), 201
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/<int:task_id>/edit/", methods=("GET", "POST"))
 def edit(task_id):
     db.create_all()
@@ -122,6 +160,7 @@ def delete(task_id):
 #     db.session.add(task)
 #     db.session.commit()
 #     return redirect(url_for("index"))
+
 @app.route("/<int:task_id>/complete/", methods=("POST",))
 def mark_complete(task_id):
     db.create_all()
@@ -130,6 +169,7 @@ def mark_complete(task_id):
     db.session.add(task)
     db.session.commit()
     return render_template("index.html", tasks=Task.query.all())
+    
 @app.route("/test_db")
 def test_db():
     db.create_all()
@@ -150,7 +190,7 @@ def test_db():
     )
 
 
-@app.route("/unsplash")
+@app.route("/unsplash/")
 def unsplash():
     return render_template("unsplash.html")
 
