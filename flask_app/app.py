@@ -29,13 +29,14 @@ class Task(db.Model):
     desc = db.Column(db.String(64))
     priority = db.Column(db.String(64))
     due_date = db.Column(db.Date())
+    complete = db.Column(db.Boolean, default=False)  # Renamed from "done"
 
-
-def __init__(self, title, desc, priority, due_date):
-    self.title = title
-    self.desc = desc
-    self.priority = priority
-    self.due_date = due_date
+    def __init__(self, title, desc, priority, due_date, complete=False):
+        self.title = title
+        self.desc = desc
+        self.priority = priority
+        self.due_date = due_date
+        self.complete = complete  # Renamed from "done"
 
 
 @app.route("/")
@@ -95,7 +96,7 @@ def edit(task_id):
             task.desc = desc
             task.priority = priority
             task.due_date = due_date
-
+            task.complete = False
             db.session.add(task)
             db.session.commit()
 
@@ -113,7 +114,22 @@ def delete(task_id):
     db.session.commit()
     return redirect(url_for("index"))
 
-
+# @app.route("/<int:task_id>/complete/", methods=("POST",))
+# def mark_complete(task_id):
+#     db.create_all()
+#     task = Task.query.get_or_404(task_id)
+#     task.complete = not task.complete
+#     db.session.add(task)
+#     db.session.commit()
+#     return redirect(url_for("index"))
+@app.route("/<int:task_id>/complete/", methods=("POST",))
+def mark_complete(task_id):
+    db.create_all()
+    task = Task.query.get_or_404(task_id)
+    task.complete = not task.complete  # Toggle the complete status
+    db.session.add(task)
+    db.session.commit()
+    return render_template("index.html", tasks=Task.query.all())
 @app.route("/test_db")
 def test_db():
     db.create_all()
